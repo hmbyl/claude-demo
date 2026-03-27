@@ -10,6 +10,8 @@ service Auth {
   rpc Register (RegisterRequest) returns (RegisterReply) {}
   // Login with existing credentials
   rpc Login (LoginRequest) returns (LoginReply) {}
+  // Get captcha when verification required
+  rpc GetCaptcha (GetCaptchaRequest) returns (GetCaptchaReply) {}
 }
 
 // Register request contains user registration information
@@ -35,6 +37,10 @@ message LoginRequest {
     string email = 2;
   }
   string password = 3;
+  // Captcha ID (required when captcha verification is triggered)
+  optional string captcha_id = 4;
+  // Captcha code (required when captcha verification is triggered)
+  optional string captcha_code = 5;
 }
 
 // Login response returns JWT token on success
@@ -44,4 +50,15 @@ message LoginReply {
   string email = 3;
   string access_token = 4;
   int64 expires_at = 5;
+}
+
+// Get captcha request
+message GetCaptchaRequest {
+}
+
+// Get captcha response
+message GetCaptchaReply {
+  string captcha_id = 1;
+  string captcha_code = 2;
+  int64 expire_at = 3;
 }

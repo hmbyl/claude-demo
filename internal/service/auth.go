@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"demo/internal/biz"
 	pb "demo/api/auth/v1"
+	"demo/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -56,7 +56,9 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 
 	// For now, clientIP and userAgent are left empty
 	// In production, these should be extracted from HTTP request context by the server
-	user, token, expiresAt, err := s.uc.Login(ctx, loginBy, isUsername, req.Password, "", "")
+	captchaID := req.GetCaptchaId()
+	captchaCode := req.GetCaptchaCode()
+	user, token, expiresAt, err := s.uc.Login(ctx, loginBy, isUsername, req.Password, "", "", captchaID, captchaCode)
 	if err != nil {
 		return nil, err
 	}
@@ -67,5 +69,19 @@ func (s *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		Email:       user.Email,
 		AccessToken: token,
 		ExpiresAt:   expiresAt.Unix(),
+	}, nil
+}
+
+// GetCaptcha gets a new captcha
+func (s *AuthService) GetCaptcha(ctx context.Context, req *pb.GetCaptchaRequest) (*pb.GetCaptchaReply, error) {
+	captchaID, captchaCode, expireAt, err := s.uc.GenerateCaptcha(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetCaptchaReply{
+		CaptchaId:   captchaID,
+		CaptchaCode: captchaCode,
+		ExpireAt:    expireAt.Unix(),
 	}, nil
 }

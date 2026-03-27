@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Auth_Register_FullMethodName = "/auth.v1.Auth/Register"
-	Auth_Login_FullMethodName    = "/auth.v1.Auth/Login"
+	Auth_Register_FullMethodName   = "/auth.v1.Auth/Register"
+	Auth_Login_FullMethodName      = "/auth.v1.Auth/Login"
+	Auth_GetCaptcha_FullMethodName = "/auth.v1.Auth/GetCaptcha"
 )
 
 // AuthClient is the client API for Auth service.
@@ -33,6 +34,8 @@ type AuthClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 	// Login with existing credentials
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
+	// Get captcha when verification required
+	GetCaptcha(ctx context.Context, in *GetCaptchaRequest, opts ...grpc.CallOption) (*GetCaptchaReply, error)
 }
 
 type authClient struct {
@@ -63,6 +66,16 @@ func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.C
 	return out, nil
 }
 
+func (c *authClient) GetCaptcha(ctx context.Context, in *GetCaptchaRequest, opts ...grpc.CallOption) (*GetCaptchaReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCaptchaReply)
+	err := c.cc.Invoke(ctx, Auth_GetCaptcha_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility.
@@ -73,6 +86,8 @@ type AuthServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	// Login with existing credentials
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
+	// Get captcha when verification required
+	GetCaptcha(context.Context, *GetCaptchaRequest) (*GetCaptchaReply, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -88,6 +103,9 @@ func (UnimplementedAuthServer) Register(context.Context, *RegisterRequest) (*Reg
 }
 func (UnimplementedAuthServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAuthServer) GetCaptcha(context.Context, *GetCaptchaRequest) (*GetCaptchaReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCaptcha not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
@@ -146,6 +164,24 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_GetCaptcha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCaptchaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetCaptcha(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_GetCaptcha_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetCaptcha(ctx, req.(*GetCaptchaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -160,6 +196,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _Auth_Login_Handler,
+		},
+		{
+			MethodName: "GetCaptcha",
+			Handler:    _Auth_GetCaptcha_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

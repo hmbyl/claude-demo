@@ -15,3 +15,12 @@ data:
     write_timeout: 0.2s
 auth:
   jwt_secret: "your-secret-key-change-in-production" # Change this in production!
+
+captcha:
+  enabled: true
+  threshold: 3            # Failure count threshold to trigger captcha
+  window_minutes: 15      # Failure count statistics window in minutes
+  expire_minutes: 5       # Captcha expiration in minutes
+  ip_whitelist:          # Trusted IP whitelist, supports single IP and CIDR
+    - "127.0.0.1"
+    - "192.168.0.0/16"

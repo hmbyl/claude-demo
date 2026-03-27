@@ -166,8 +166,12 @@ type LoginRequest struct {
 	//
 	//	*LoginRequest_Username
 	//	*LoginRequest_Email
-	LoginBy       isLoginRequest_LoginBy `protobuf_oneof:"login_by"`
-	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	LoginBy  isLoginRequest_LoginBy `protobuf_oneof:"login_by"`
+	Password string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	// Captcha ID (required when captcha verification is triggered)
+	CaptchaId *string `protobuf:"bytes,4,opt,name=captcha_id,json=captchaId,proto3,oneof" json:"captcha_id,omitempty"`
+	// Captcha code (required when captcha verification is triggered)
+	CaptchaCode   *string `protobuf:"bytes,5,opt,name=captcha_code,json=captchaCode,proto3,oneof" json:"captcha_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -230,6 +234,20 @@ func (x *LoginRequest) GetEmail() string {
 func (x *LoginRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetCaptchaId() string {
+	if x != nil && x.CaptchaId != nil {
+		return *x.CaptchaId
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetCaptchaCode() string {
+	if x != nil && x.CaptchaCode != nil {
+		return *x.CaptchaCode
 	}
 	return ""
 }
@@ -327,6 +345,104 @@ func (x *LoginReply) GetExpiresAt() int64 {
 	return 0
 }
 
+// Get captcha request
+type GetCaptchaRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCaptchaRequest) Reset() {
+	*x = GetCaptchaRequest{}
+	mi := &file_api_auth_v1_auth_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCaptchaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCaptchaRequest) ProtoMessage() {}
+
+func (x *GetCaptchaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_auth_v1_auth_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCaptchaRequest.ProtoReflect.Descriptor instead.
+func (*GetCaptchaRequest) Descriptor() ([]byte, []int) {
+	return file_api_auth_v1_auth_proto_rawDescGZIP(), []int{4}
+}
+
+// Get captcha response
+type GetCaptchaReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CaptchaId     string                 `protobuf:"bytes,1,opt,name=captcha_id,json=captchaId,proto3" json:"captcha_id,omitempty"`
+	CaptchaCode   string                 `protobuf:"bytes,2,opt,name=captcha_code,json=captchaCode,proto3" json:"captcha_code,omitempty"`
+	ExpireAt      int64                  `protobuf:"varint,3,opt,name=expire_at,json=expireAt,proto3" json:"expire_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCaptchaReply) Reset() {
+	*x = GetCaptchaReply{}
+	mi := &file_api_auth_v1_auth_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCaptchaReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCaptchaReply) ProtoMessage() {}
+
+func (x *GetCaptchaReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_auth_v1_auth_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCaptchaReply.ProtoReflect.Descriptor instead.
+func (*GetCaptchaReply) Descriptor() ([]byte, []int) {
+	return file_api_auth_v1_auth_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetCaptchaReply) GetCaptchaId() string {
+	if x != nil {
+		return x.CaptchaId
+	}
+	return ""
+}
+
+func (x *GetCaptchaReply) GetCaptchaCode() string {
+	if x != nil {
+		return x.CaptchaCode
+	}
+	return ""
+}
+
+func (x *GetCaptchaReply) GetExpireAt() int64 {
+	if x != nil {
+		return x.ExpireAt
+	}
+	return 0
+}
+
 var File_api_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_api_auth_v1_auth_proto_rawDesc = "" +
@@ -342,13 +458,18 @@ const file_api_auth_v1_auth_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12!\n" +
 	"\faccess_token\x18\x04 \x01(\tR\vaccessToken\x12\x1d\n" +
 	"\n" +
-	"expires_at\x18\x05 \x01(\x03R\texpiresAt\"l\n" +
+	"expires_at\x18\x05 \x01(\x03R\texpiresAt\"\xd8\x01\n" +
 	"\fLoginRequest\x12\x1c\n" +
 	"\busername\x18\x01 \x01(\tH\x00R\busername\x12\x16\n" +
 	"\x05email\x18\x02 \x01(\tH\x00R\x05email\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpasswordB\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\"\n" +
 	"\n" +
-	"\blogin_by\"\x99\x01\n" +
+	"captcha_id\x18\x04 \x01(\tH\x01R\tcaptchaId\x88\x01\x01\x12&\n" +
+	"\fcaptcha_code\x18\x05 \x01(\tH\x02R\vcaptchaCode\x88\x01\x01B\n" +
+	"\n" +
+	"\blogin_byB\r\n" +
+	"\v_captcha_idB\x0f\n" +
+	"\r_captcha_code\"\x99\x01\n" +
 	"\n" +
 	"LoginReply\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -356,10 +477,18 @@ const file_api_auth_v1_auth_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12!\n" +
 	"\faccess_token\x18\x04 \x01(\tR\vaccessToken\x12\x1d\n" +
 	"\n" +
-	"expires_at\x18\x05 \x01(\x03R\texpiresAt2}\n" +
+	"expires_at\x18\x05 \x01(\x03R\texpiresAt\"\x13\n" +
+	"\x11GetCaptchaRequest\"p\n" +
+	"\x0fGetCaptchaReply\x12\x1d\n" +
+	"\n" +
+	"captcha_id\x18\x01 \x01(\tR\tcaptchaId\x12!\n" +
+	"\fcaptcha_code\x18\x02 \x01(\tR\vcaptchaCode\x12\x1b\n" +
+	"\texpire_at\x18\x03 \x01(\x03R\bexpireAt2\xc3\x01\n" +
 	"\x04Auth\x12>\n" +
 	"\bRegister\x12\x18.auth.v1.RegisterRequest\x1a\x16.auth.v1.RegisterReply\"\x00\x125\n" +
-	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x13.auth.v1.LoginReply\"\x00B\x15Z\x13demo/api/auth/v1;v1b\x06proto3"
+	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x13.auth.v1.LoginReply\"\x00\x12D\n" +
+	"\n" +
+	"GetCaptcha\x12\x1a.auth.v1.GetCaptchaRequest\x1a\x18.auth.v1.GetCaptchaReply\"\x00B\x15Z\x13demo/api/auth/v1;v1b\x06proto3"
 
 var (
 	file_api_auth_v1_auth_proto_rawDescOnce sync.Once
@@ -373,20 +502,24 @@ func file_api_auth_v1_auth_proto_rawDescGZIP() []byte {
 	return file_api_auth_v1_auth_proto_rawDescData
 }
 
-var file_api_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_api_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_api_auth_v1_auth_proto_goTypes = []any{
-	(*RegisterRequest)(nil), // 0: auth.v1.RegisterRequest
-	(*RegisterReply)(nil),   // 1: auth.v1.RegisterReply
-	(*LoginRequest)(nil),    // 2: auth.v1.LoginRequest
-	(*LoginReply)(nil),      // 3: auth.v1.LoginReply
+	(*RegisterRequest)(nil),   // 0: auth.v1.RegisterRequest
+	(*RegisterReply)(nil),     // 1: auth.v1.RegisterReply
+	(*LoginRequest)(nil),      // 2: auth.v1.LoginRequest
+	(*LoginReply)(nil),        // 3: auth.v1.LoginReply
+	(*GetCaptchaRequest)(nil), // 4: auth.v1.GetCaptchaRequest
+	(*GetCaptchaReply)(nil),   // 5: auth.v1.GetCaptchaReply
 }
 var file_api_auth_v1_auth_proto_depIdxs = []int32{
 	0, // 0: auth.v1.Auth.Register:input_type -> auth.v1.RegisterRequest
 	2, // 1: auth.v1.Auth.Login:input_type -> auth.v1.LoginRequest
-	1, // 2: auth.v1.Auth.Register:output_type -> auth.v1.RegisterReply
-	3, // 3: auth.v1.Auth.Login:output_type -> auth.v1.LoginReply
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: auth.v1.Auth.GetCaptcha:input_type -> auth.v1.GetCaptchaRequest
+	1, // 3: auth.v1.Auth.Register:output_type -> auth.v1.RegisterReply
+	3, // 4: auth.v1.Auth.Login:output_type -> auth.v1.LoginReply
+	5, // 5: auth.v1.Auth.GetCaptcha:output_type -> auth.v1.GetCaptchaReply
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -407,7 +540,7 @@ func file_api_auth_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_auth_v1_auth_proto_rawDesc), len(file_api_auth_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
