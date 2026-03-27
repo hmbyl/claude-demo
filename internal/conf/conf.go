@@ -3,9 +3,10 @@ package conf
 import "time"
 
 type Bootstrap struct {
-	Server *Server `yaml:"server"`
-	Data   *Data   `yaml:"data"`
-	Auth   *Auth   `yaml:"auth"`
+	Server  *Server  `yaml:"server"`
+	Data    *Data    `yaml:"data"`
+	Auth    *Auth    `yaml:"auth"`
+	Captcha *Captcha `yaml:"captcha"`
 }
 
 type Server struct {
@@ -41,4 +42,13 @@ type Redis struct {
 
 type Auth struct {
 	JWTSecret string `yaml:"jwt_secret"`
+}
+
+// Captcha configuration for login captcha verification
+type Captcha struct {
+	Enabled       bool     `yaml:"enabled"`        // Whether enable captcha verification
+	Threshold     int      `yaml:"threshold"`      // Failure count threshold to trigger captcha
+	WindowMinutes int      `yaml:"window_minutes"` // Failure count statistics window in minutes
+	ExpireMinutes int      `yaml:"expire_minutes"` // Captcha expiration in minutes
+	IPWhitelist   []string `yaml:"ip_whitelist"`   // Trusted IP whitelist, supports single IP and CIDR
 }
