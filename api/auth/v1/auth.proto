@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "demo/api/auth/v1;v1";
+
+// Authentication service definition
+service Auth {
+  // Register a new user
+  rpc Register (RegisterRequest) returns (RegisterReply) {}
+  // Login with existing credentials
+  rpc Login (LoginRequest) returns (LoginReply) {}
+}
+
+// Register request contains user registration information
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+// Register response returns JWT token on success
+message RegisterReply {
+  int64 user_id = 1;
+  string username = 2;
+  string email = 3;
+  string access_token = 4;
+  int64 expires_at = 5;
+}
+
+// Login request contains login credentials
+message LoginRequest {
+  oneof login_by {
+    string username = 1;
+    string email = 2;
+  }
+  string password = 3;
+}
+
+// Login response returns JWT token on success
+message LoginReply {
+  int64 user_id = 1;
+  string username = 2;
+  string email = 3;
+  string access_token = 4;
+  int64 expires_at = 5;
+}

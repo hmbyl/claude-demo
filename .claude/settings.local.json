@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__spec-workflow-mcp__specs-workflow",
+      "WebSearch",
+      "Bash(go version:*)",
+      "Bash(kratos new:*)",
+      "Bash(go mod:*)",
+      "Bash(go build:*)",
+      "Bash(go env:*)",
+      "Bash(make help:*)",
+      "Bash(make build:*)",
+      "Bash(make run:*)",
+      "Bash(protoc --version && ls /Users/byl/mycode/go/bin/protoc-gen-go*)",
+      "Bash(\\\\ protoc:*)",
+      "Bash(lsof -ti :8000,:9000 | xargs kill -9 2>/dev/null; echo \"cleared\")",
+      "Bash(lsof -ti tcp:8000 | xargs kill -9 2>/dev/null\nlsof -ti tcp:9000 | xargs kill -9 2>/dev/null\necho \"cleared\")",
+      "Bash(tree -L 3 /Users/byl/mycode/claude/demo 2>/dev/null || find /Users/byl/mycode/claude/demo -not -path '*/\\\\.*' -type d | sort)",
+      "Bash(/usr/local/mysql/bin/mysql -uroot -p12345678 -h127.0.0.1 -P3306 test -e \"DESCRIBE users;\")",
+      "Bash(make wire:*)",
+      "Bash(go get:*)",
+      "Bash(make proto:*)",
+      "Bash(protoc \\\\\n  --proto_path=. \\\\\n  --proto_path=./third_party \\\\\n  --go_out=paths=source_relative:. \\\\\n  --go-http_out=paths=source_relative:. \\\\\n  --go-grpc_out=paths=source_relative:. \\\\\n  --go-errors_out=paths=source_relative:. \\\\\n  api/auth/v1/auth.proto)",
+      "Bash(make install-tools:*)",
+      "Bash(protoc-gen-go-http --version)",
+      "Bash(protoc \\\\\n  --proto_path=. \\\\\n  --proto_path=./third_party \\\\\n  --go_out=paths=source_relative:. \\\\\n  --go-http_out=paths=source_relative:. \\\\\n  --go-grpc_out=paths=source_relative:. \\\\\n  --go-errors_out=paths=source_relative:. \\\\\n  api/auth/v1/auth.proto \\\\\n  2>&1)",
+      "Bash(go install:*)",
+      "Bash(wire ./cmd/server)",
+      "Bash(mysql -h127.0.0.1 -uroot -p12345678 test -N -e \"SHOW TABLES LIKE 'tbl_user_login_logs%';\")",
+      "Bash(mysql -h127.0.0.1 -uroot -p12345678 test -e \"DESCRIBE tbl_user_login_logs_00;\")"
+    ]
+  }
+}
